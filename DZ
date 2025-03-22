@@ -1,0 +1,46 @@
+import telebot
+import time, threading, schedule
+# Инициализация бота с использованием его токена
+bot = telebot.TeleBot("8055184586:AAEtsWJv2F3PZVevS124VgZMpaSfUu3Fdsk")
+
+# Обработчик команды '/start' и '/hello'
+@bot.message_handler(commands=['start', 'hello'])
+def send_welcome(message):
+    bot.reply_to(message, 'Привет! Я бот ALENAbot! Напиши /heh или /heh и любое число, а затем чтобы узнать, что я умею напиши /help')
+
+# Обработчик команды '/heh'
+@bot.message_handler(commands=['heh'])
+def send_heh(message):
+    count_heh = int(message.text.split()[1]) if len(message.text.split()) > 1 else 5
+    bot.reply_to(message, "he" * count_heh)
+
+@bot.message_handler(commands=['help'])
+def send_welcome(message):
+    bot.reply_to(message, "Привет, напиши /set , пробел и любое количество секунд, чтобы поставить таймер. По истечении таймера я напишу Beep! Чтобы остановить таймер, напиши /unset")
+
+
+def beep(chat_id) -> None:
+    """Send the beep message."""
+    bot.send_message(chat_id, text='Beep!')
+
+
+@bot.message_handler(commands=['set'])
+def set_timer(message):
+    args = message.text.split()
+    if len(args) > 1 and args[1].isdigit():
+        sec = int(args[1])
+        schedule.every(sec).seconds.do(beep, message.chat.id).tag(message.chat.id)
+    else:
+        bot.reply_to(message, 'Usage: /set <seconds>')
+
+
+@bot.message_handler(commands=['unset'])
+def unset_timer(message):
+    schedule.clear(message.chat.id)
+
+
+if __name__ == '__main__':
+    threading.Thread(target=bot.infinity_polling, name='bot_infinity_polling', daemon=True).start()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
