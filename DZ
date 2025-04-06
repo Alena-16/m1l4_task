@@ -1,7 +1,7 @@
 import telebot
 import time, threading, schedule
 # Инициализация бота с использованием его токена
-bot = telebot.TeleBot("8055184586:AAEtsWJv2F3PZVevS124VgZMpaSfUu3Fdsk")
+bot = telebot.TeleBot("ТОКЕН")
 
 # Обработчик команды '/start' и '/hello'
 @bot.message_handler(commands=['start', 'hello'])
